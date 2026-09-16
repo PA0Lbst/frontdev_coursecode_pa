@@ -93,23 +93,23 @@ Canonical examples: `src/components/atoms/Button/Button.test.tsx` and `src/compo
 
 # Backend
 
-Canonical example: `src/actions/todo/createTodo/createTodo.ts`.
+Canonical example: `src/actions/workoutSet/createSet/createSet.ts`.
 
 ## Server Actions
 
 - Live under `src/actions/{resource}/{actionName}/{actionName}.ts`. One folder per action, named after the exported function. The action file matches the folder.
 - Each action file starts with `"use server"`. One async named export only. No default export.
-- No barrel files at any actions level. Import the file: `@/actions/todo/createTodo/createTodo`.
+- No barrel files at any actions level. Import the file: `@/actions/workoutSet/createSet/createSet`.
 - Thin Prisma: call `@/prisma/prismaClient` directly. Do not add a service or repository layer.
-- Shared helpers live in `src/actions/{resource}/helpers.ts`. That file is not a Server Action (no `"use server"`). Trim and normalize there; throw before write if required fields are empty.
+- Shared helpers live in `src/actions/{resource}/helpers.ts`, only when more than one action in that resource needs the same parsing (e.g. `create`/`update`). That file is not a Server Action (no `"use server"`). Trim and normalize there; throw before write if required fields are empty. A resource with a single mutating action (e.g. `workoutSession`) can parse inline instead of adding a helpers file.
 - Do not add Route Handlers for this app's backend.
 
-Todo helper example (`src/actions/todo/helpers.ts`): trim `title` and throw if empty; `description` `null` stays `null`; a string description is trimmed and empty becomes `null` (not `""`).
+Workout helper example (`src/actions/workoutSet/helpers.ts`): trim `exercise` and throw if empty; `reps` must be a positive integer; `weight` must be a non-negative number.
 
 ## Action tests
 
 - Vitest **node** tests under `tests/actions/{resource}/{actionName}/{actionName}.test.ts` against `prisma/test.db`.
-- Import the named action with `@/` (e.g. `import { createTodo } from "@/actions/todo/createTodo/createTodo"`). Do not colocate action tests under `src/`.
+- Import the named action with `@/` (e.g. `import { createSet } from "@/actions/workoutSet/createSet/createSet"`). Do not colocate action tests under `src/`.
 
 # App wiring
 

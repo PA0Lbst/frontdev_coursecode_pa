@@ -6,9 +6,19 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
-model Todo {
+model WorkoutSession {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  title String
-  description String?
+  name      String?
+  sets      WorkoutSet[]
+}
+
+model WorkoutSet {
+  id        Int      @id @default(autoincrement())
+  sessionId Int
+  session   WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  exercise  String
+  reps      Int
+  weight    Float
 }

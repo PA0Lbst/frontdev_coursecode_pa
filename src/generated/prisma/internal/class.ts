@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.10.0",
   "engineVersion": "0edf323efd1d98336f3f0a68684b56f689b900d3",
   "activeProvider": "sqlite",
-  "inlineSchema": "datasource db {\n  provider = \"sqlite\"\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\nmodel Todo {\n  id          Int      @id @default(autoincrement())\n  createdAt   DateTime @default(now())\n  title       String\n  description String?\n}\n",
+  "inlineSchema": "datasource db {\n  provider = \"sqlite\"\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\nmodel WorkoutSession {\n  id        Int          @id @default(autoincrement())\n  createdAt DateTime     @default(now())\n  name      String?\n  sets      WorkoutSet[]\n}\n\nmodel WorkoutSet {\n  id        Int            @id @default(autoincrement())\n  sessionId Int\n  session   WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)\n  createdAt DateTime       @default(now())\n  exercise  String\n  reps      Int\n  weight    Float\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -32,10 +32,10 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Todo\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null,\"schema\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"WorkoutSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sets\",\"kind\":\"object\",\"type\":\"WorkoutSet\",\"relationName\":\"WorkoutSessionToWorkoutSet\"}],\"dbName\":null,\"schema\":null},\"WorkoutSet\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"sessionId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"session\",\"kind\":\"object\",\"type\":\"WorkoutSession\",\"relationName\":\"WorkoutSessionToWorkoutSet\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"exercise\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reps\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"weight\",\"kind\":\"scalar\",\"type\":\"Float\"}],\"dbName\":null,\"schema\":null}},\"enums\":{},\"types\":{}}")
 config.parameterizationSchema = {
-  strings: JSON.parse("[\"where\",\"Todo.findUnique\",\"Todo.findUniqueOrThrow\",\"orderBy\",\"cursor\",\"Todo.findFirst\",\"Todo.findFirstOrThrow\",\"Todo.findMany\",\"data\",\"Todo.createOne\",\"Todo.createMany\",\"Todo.createManyAndReturn\",\"Todo.updateOne\",\"Todo.updateMany\",\"Todo.updateManyAndReturn\",\"create\",\"update\",\"Todo.upsertOne\",\"Todo.deleteOne\",\"Todo.deleteMany\",\"having\",\"_count\",\"_avg\",\"_sum\",\"_min\",\"_max\",\"Todo.groupBy\",\"Todo.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"createdAt\",\"title\",\"description\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"contains\",\"startsWith\",\"endsWith\",\"not\",\"set\",\"increment\",\"decrement\",\"multiply\",\"divide\"]"),
-  graph: "NwsQBxwAACkAMB0AAAQAEB4AACkAMB8CAAAAASBAACsAISEBACwAISIBAC0AIQEAAAABACABAAAAAQAgBxwAACkAMB0AAAQAEB4AACkAMB8CACoAISBAACsAISEBACwAISIBAC0AIQEiAAAuACADAAAABAAgAwAABQAwBAAAAQAgAwAAAAQAIAMAAAUAMAQAAAEAIAMAAAAEACADAAAFADAEAAABACAEHwIAAAABIEAAAAABIQEAAAABIgEAAAABAQgAAAkAIAQfAgAAAAEgQAAAAAEhAQAAAAEiAQAAAAEBCAAACwAwAQgAAAsAMAQfAgA3ACEgQAA0ACEhAQA1ACEiAQA2ACECAAAAAQAgCAAADgAgBB8CADcAISBAADQAISEBADUAISIBADYAIQIAAAAEACAIAAAQACACAAAABAAgCAAAEAAgAwAAAAEAIA8AAAkAIBAAAA4AIAEAAAABACABAAAABAAgBhUAAC8AIBYAADAAIBcAADMAIBgAADIAIBkAADEAICIAAC4AIAccAAAaADAdAAAXABAeAAAaADAfAgAbACEgQAAcACEhAQAdACEiAQAeACEDAAAABAAgAwAAFgAwFAAAFwAgAwAAAAQAIAMAAAUAMAQAAAEAIAccAAAaADAdAAAXABAeAAAaADAfAgAbACEgQAAcACEhAQAdACEiAQAeACENFQAAIwAgFgAAKAAgFwAAIwAgGAAAIwAgGQAAIwAgIwIAAAABJAIAAAAEJQIAAAAEJgIAAAABJwIAAAABKAIAAAABKQIAAAABLQIAJwAhCxUAACMAIBgAACYAIBkAACYAICNAAAAAASRAAAAABCVAAAAABCZAAAAAASdAAAAAAShAAAAAASlAAAAAAS1AACUAIQ4VAAAjACAYAAAkACAZAAAkACAjAQAAAAEkAQAAAAQlAQAAAAQmAQAAAAEnAQAAAAEoAQAAAAEpAQAAAAEqAQAAAAErAQAAAAEsAQAAAAEtAQAiACEOFQAAIAAgGAAAIQAgGQAAIQAgIwEAAAABJAEAAAAFJQEAAAAFJgEAAAABJwEAAAABKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAAAABLQEAHwAhDhUAACAAIBgAACEAIBkAACEAICMBAAAAASQBAAAABSUBAAAABSYBAAAAAScBAAAAASgBAAAAASkBAAAAASoBAAAAASsBAAAAASwBAAAAAS0BAB8AIQgjAgAAAAEkAgAAAAUlAgAAAAUmAgAAAAEnAgAAAAEoAgAAAAEpAgAAAAEtAgAgACELIwEAAAABJAEAAAAFJQEAAAAFJgEAAAABJwEAAAABKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAAAABLQEAIQAhDhUAACMAIBgAACQAIBkAACQAICMBAAAAASQBAAAABCUBAAAABCYBAAAAAScBAAAAASgBAAAAASkBAAAAASoBAAAAASsBAAAAASwBAAAAAS0BACIAIQgjAgAAAAEkAgAAAAQlAgAAAAQmAgAAAAEnAgAAAAEoAgAAAAEpAgAAAAEtAgAjACELIwEAAAABJAEAAAAEJQEAAAAEJgEAAAABJwEAAAABKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAAAABLQEAJAAhCxUAACMAIBgAACYAIBkAACYAICNAAAAAASRAAAAABCVAAAAABCZAAAAAASdAAAAAAShAAAAAASlAAAAAAS1AACUAIQgjQAAAAAEkQAAAAAQlQAAAAAQmQAAAAAEnQAAAAAEoQAAAAAEpQAAAAAEtQAAmACENFQAAIwAgFgAAKAAgFwAAIwAgGAAAIwAgGQAAIwAgIwIAAAABJAIAAAAEJQIAAAAEJgIAAAABJwIAAAABKAIAAAABKQIAAAABLQIAJwAhCCMIAAAAASQIAAAABCUIAAAABCYIAAAAAScIAAAAASgIAAAAASkIAAAAAS0IACgAIQccAAApADAdAAAEABAeAAApADAfAgAqACEgQAArACEhAQAsACEiAQAtACEIIwIAAAABJAIAAAAEJQIAAAAEJgIAAAABJwIAAAABKAIAAAABKQIAAAABLQIAIwAhCCNAAAAAASRAAAAABCVAAAAABCZAAAAAASdAAAAAAShAAAAAASlAAAAAAS1AACYAIQsjAQAAAAEkAQAAAAQlAQAAAAQmAQAAAAEnAQAAAAEoAQAAAAEpAQAAAAEqAQAAAAErAQAAAAEsAQAAAAEtAQAkACELIwEAAAABJAEAAAAFJQEAAAAFJgEAAAABJwEAAAABKAEAAAABKQEAAAABKgEAAAABKwEAAAABLAEAAAABLQEAIQAhAAAAAAAAAS5AAAAAAQEuAQAAAAEBLgEAAAABBS4CAAAAAS8CAAAAATACAAAAATECAAAAATICAAAAAQAAAAAFFQAGFgAHFwAIGAAJGQAKAAAAAAAFFQAGFgAHFwAIGAAJGQAKAQIBAgMBBQYBBgcBBwgBCQoBCgwCCw0DDA8BDRECDhIEERMBEhQBExUCGhgFGxkL"
+  strings: JSON.parse("[\"where\",\"orderBy\",\"cursor\",\"session\",\"sets\",\"_count\",\"WorkoutSession.findUnique\",\"WorkoutSession.findUniqueOrThrow\",\"WorkoutSession.findFirst\",\"WorkoutSession.findFirstOrThrow\",\"WorkoutSession.findMany\",\"data\",\"WorkoutSession.createOne\",\"WorkoutSession.createMany\",\"WorkoutSession.createManyAndReturn\",\"WorkoutSession.updateOne\",\"WorkoutSession.updateMany\",\"WorkoutSession.updateManyAndReturn\",\"create\",\"update\",\"WorkoutSession.upsertOne\",\"WorkoutSession.deleteOne\",\"WorkoutSession.deleteMany\",\"having\",\"_avg\",\"_sum\",\"_min\",\"_max\",\"WorkoutSession.groupBy\",\"WorkoutSession.aggregate\",\"WorkoutSet.findUnique\",\"WorkoutSet.findUniqueOrThrow\",\"WorkoutSet.findFirst\",\"WorkoutSet.findFirstOrThrow\",\"WorkoutSet.findMany\",\"WorkoutSet.createOne\",\"WorkoutSet.createMany\",\"WorkoutSet.createManyAndReturn\",\"WorkoutSet.updateOne\",\"WorkoutSet.updateMany\",\"WorkoutSet.updateManyAndReturn\",\"WorkoutSet.upsertOne\",\"WorkoutSet.deleteOne\",\"WorkoutSet.deleteMany\",\"WorkoutSet.groupBy\",\"WorkoutSet.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"sessionId\",\"createdAt\",\"exercise\",\"reps\",\"weight\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"not\",\"contains\",\"startsWith\",\"endsWith\",\"name\",\"every\",\"some\",\"none\",\"is\",\"isNot\",\"connectOrCreate\",\"upsert\",\"createMany\",\"set\",\"disconnect\",\"delete\",\"connect\",\"updateMany\",\"deleteMany\",\"increment\",\"decrement\",\"multiply\",\"divide\"]"),
+  graph: "dxYgBwQAAEsAIC4AAEcAMC8AAAkAEDAAAEcAMDECAAAAATNAAEkAIUIBAEoAIQEAAAABACAKAwAATwAgLgAATAAwLwAAAwAQMAAATAAwMQIASAAhMgIASAAhM0AASQAhNAEATQAhNQIASAAhNggATgAhAQMAAHEAIAoDAABPACAuAABMADAvAAADABAwAABMADAxAgAAAAEyAgBIACEzQABJACE0AQBNACE1AgBIACE2CABOACEDAAAAAwAgAQAABAAwAgAABQAgAQAAAAMAIAEAAAABACAHBAAASwAgLgAARwAwLwAACQAQMAAARwAwMQIASAAhM0AASQAhQgEASgAhAgQAAHAAIEIAAFsAIAMAAAAJACABAAAKADACAAABACADAAAACQAgAQAACgAwAgAAAQAgAwAAAAkAIAEAAAoAMAIAAAEAIAQEAABvACAxAgAAAAEzQAAAAAFCAQAAAAEBCwAADgAgAzECAAAAATNAAAAAAUIBAAAAAQELAAAQADABCwAAEAAwBAQAAGIAIDECAFcAITNAAFUAIUIBAGEAIQIAAAABACALAAATACADMQIAVwAhM0AAVQAhQgEAYQAhAgAAAAkAIAsAABUAIAIAAAAJACALAAAVACADAAAAAQAgEgAADgAgEwAAEwAgAQAAAAEAIAEAAAAJACAGBQAAXAAgGAAAXQAgGQAAYAAgGgAAXwAgGwAAXgAgQgAAWwAgBi4AAEIAMC8AABwAEDAAAEIAMDECADYAITNAADcAIUIBAEMAIQMAAAAJACABAAAbADAXAAAcACADAAAACQAgAQAACgAwAgAAAQAgAQAAAAUAIAEAAAAFACADAAAAAwAgAQAABAAwAgAABQAgAwAAAAMAIAEAAAQAMAIAAAUAIAMAAAADACABAAAEADACAAAFACAHAwAAWgAgMQIAAAABMgIAAAABM0AAAAABNAEAAAABNQIAAAABNggAAAABAQsAACQAIAYxAgAAAAEyAgAAAAEzQAAAAAE0AQAAAAE1AgAAAAE2CAAAAAEBCwAAJgAwAQsAACYAMAcDAABZACAxAgBXACEyAgBXACEzQABVACE0AQBWACE1AgBXACE2CABYACECAAAABQAgCwAAKQAgBjECAFcAITICAFcAITNAAFUAITQBAFYAITUCAFcAITYIAFgAIQIAAAADACALAAArACACAAAAAwAgCwAAKwAgAwAAAAUAIBIAACQAIBMAACkAIAEAAAAFACABAAAAAwAgBQUAAFAAIBgAAFEAIBkAAFQAIBoAAFMAIBsAAFIAIAkuAAA1ADAvAAAyABAwAAA1ADAxAgA2ACEyAgA2ACEzQAA3ACE0AQA4ACE1AgA2ACE2CAA5ACEDAAAAAwAgAQAAMQAwFwAAMgAgAwAAAAMAIAEAAAQAMAIAAAUAIAkuAAA1ADAvAAAyABAwAAA1ADAxAgA2ACEyAgA2ACEzQAA3ACE0AQA4ACE1AgA2ACE2CAA5ACENBQAAOwAgGAAAPAAgGQAAOwAgGgAAOwAgGwAAOwAgNwIAAAABOAIAAAAEOQIAAAAEOgIAAAABOwIAAAABPAIAAAABPQIAAAABPgIAQQAhCwUAADsAIBoAAEAAIBsAAEAAIDdAAAAAAThAAAAABDlAAAAABDpAAAAAATtAAAAAATxAAAAAAT1AAAAAAT5AAD8AIQ4FAAA7ACAaAAA-ACAbAAA-ACA3AQAAAAE4AQAAAAQ5AQAAAAQ6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQA9ACE_AQAAAAFAAQAAAAFBAQAAAAENBQAAOwAgGAAAPAAgGQAAPAAgGgAAPAAgGwAAPAAgNwgAAAABOAgAAAAEOQgAAAAEOggAAAABOwgAAAABPAgAAAABPQgAAAABPggAOgAhDQUAADsAIBgAADwAIBkAADwAIBoAADwAIBsAADwAIDcIAAAAATgIAAAABDkIAAAABDoIAAAAATsIAAAAATwIAAAAAT0IAAAAAT4IADoAIQg3AgAAAAE4AgAAAAQ5AgAAAAQ6AgAAAAE7AgAAAAE8AgAAAAE9AgAAAAE-AgA7ACEINwgAAAABOAgAAAAEOQgAAAAEOggAAAABOwgAAAABPAgAAAABPQgAAAABPggAPAAhDgUAADsAIBoAAD4AIBsAAD4AIDcBAAAAATgBAAAABDkBAAAABDoBAAAAATsBAAAAATwBAAAAAT0BAAAAAT4BAD0AIT8BAAAAAUABAAAAAUEBAAAAAQs3AQAAAAE4AQAAAAQ5AQAAAAQ6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQA-ACE_AQAAAAFAAQAAAAFBAQAAAAELBQAAOwAgGgAAQAAgGwAAQAAgN0AAAAABOEAAAAAEOUAAAAAEOkAAAAABO0AAAAABPEAAAAABPUAAAAABPkAAPwAhCDdAAAAAAThAAAAABDlAAAAABDpAAAAAATtAAAAAATxAAAAAAT1AAAAAAT5AAEAAIQ0FAAA7ACAYAAA8ACAZAAA7ACAaAAA7ACAbAAA7ACA3AgAAAAE4AgAAAAQ5AgAAAAQ6AgAAAAE7AgAAAAE8AgAAAAE9AgAAAAE-AgBBACEGLgAAQgAwLwAAHAAQMAAAQgAwMQIANgAhM0AANwAhQgEAQwAhDgUAAEUAIBoAAEYAIBsAAEYAIDcBAAAAATgBAAAABTkBAAAABToBAAAAATsBAAAAATwBAAAAAT0BAAAAAT4BAEQAIT8BAAAAAUABAAAAAUEBAAAAAQ4FAABFACAaAABGACAbAABGACA3AQAAAAE4AQAAAAU5AQAAAAU6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQBEACE_AQAAAAFAAQAAAAFBAQAAAAEINwIAAAABOAIAAAAFOQIAAAAFOgIAAAABOwIAAAABPAIAAAABPQIAAAABPgIARQAhCzcBAAAAATgBAAAABTkBAAAABToBAAAAATsBAAAAATwBAAAAAT0BAAAAAT4BAEYAIT8BAAAAAUABAAAAAUEBAAAAAQcEAABLACAuAABHADAvAAAJABAwAABHADAxAgBIACEzQABJACFCAQBKACEINwIAAAABOAIAAAAEOQIAAAAEOgIAAAABOwIAAAABPAIAAAABPQIAAAABPgIAOwAhCDdAAAAAAThAAAAABDlAAAAABDpAAAAAATtAAAAAATxAAAAAAT1AAAAAAT5AAEAAIQs3AQAAAAE4AQAAAAU5AQAAAAU6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQBGACE_AQAAAAFAAQAAAAFBAQAAAAEDQwAAAwAgRAAAAwAgRQAAAwAgCgMAAE8AIC4AAEwAMC8AAAMAEDAAAEwAMDECAEgAITICAEgAITNAAEkAITQBAE0AITUCAEgAITYIAE4AIQs3AQAAAAE4AQAAAAQ5AQAAAAQ6AQAAAAE7AQAAAAE8AQAAAAE9AQAAAAE-AQA-ACE_AQAAAAFAAQAAAAFBAQAAAAEINwgAAAABOAgAAAAEOQgAAAAEOggAAAABOwgAAAABPAgAAAABPQgAAAABPggAPAAhCQQAAEsAIC4AAEcAMC8AAAkAEDAAAEcAMDECAEgAITNAAEkAIUIBAEoAIUYAAAkAIEcAAAkAIAAAAAAAAUtAAAAAAQFLAQAAAAEFSwIAAAABUQIAAAABUgIAAAABUwIAAAABVAIAAAABBUsIAAAAAVEIAAAAAVIIAAAAAVMIAAAAAVQIAAAAAQUSAABzACATAAB2ACBIAAB0ACBJAAB1ACBOAAABACADEgAAcwAgSAAAdAAgTgAAAQAgAAAAAAAAAUsBAAAAAQsSAABjADATAABoADBIAABkADBJAABlADBKAABmACBLAABnADBMAABnADBNAABnADBOAABnADBPAABpADBQAABqADAFMQIAAAABM0AAAAABNAEAAAABNQIAAAABNggAAAABAgAAAAUAIBIAAG4AIAMAAAAFACASAABuACATAABtACABCwAAcgAwCgMAAE8AIC4AAEwAMC8AAAMAEDAAAEwAMDECAAAAATICAEgAITNAAEkAITQBAE0AITUCAEgAITYIAE4AIQIAAAAFACALAABtACACAAAAawAgCwAAbAAgCS4AAGoAMC8AAGsAEDAAAGoAMDECAEgAITICAEgAITNAAEkAITQBAE0AITUCAEgAITYIAE4AIQkuAABqADAvAABrABAwAABqADAxAgBIACEyAgBIACEzQABJACE0AQBNACE1AgBIACE2CABOACEFMQIAVwAhM0AAVQAhNAEAVgAhNQIAVwAhNggAWAAhBTECAFcAITNAAFUAITQBAFYAITUCAFcAITYIAFgAIQUxAgAAAAEzQAAAAAE0AQAAAAE1AgAAAAE2CAAAAAEEEgAAYwAwSAAAZAAwSgAAZgAgTgAAZwAwAAIEAABwACBCAABbACAFMQIAAAABM0AAAAABNAEAAAABNQIAAAABNggAAAABAzECAAAAATNAAAAAAUIBAAAAAQIAAAABACASAABzACADAAAACQAgEgAAcwAgEwAAdwAgBQAAAAkAIAsAAHcAIDECAFcAITNAAFUAIUIBAGEAIQMxAgBXACEzQABVACFCAQBhACECBAYCBQADAQMAAQEEBwAAAAAFBQAIGAAJGQAKGgALGwAMAAAAAAAFBQAIGAAJGQAKGgALGwAMAQMAAQEDAAEFBQARGAASGQATGgAUGwAVAAAAAAAFBQARGAASGQATGgAUGwAVBgIBBwgBCAsBCQwBCg0BDA8BDREEDhIFDxQBEBYEERcGFBgBFRkBFhoEHB0HHR4NHh8CHyACICECISICIiMCIyUCJCcEJSgOJioCJywEKC0PKS4CKi8CKzAELDMQLTQW"
 }
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
@@ -70,8 +70,8 @@ export interface PrismaClientConstructor {
    * const prisma = new PrismaClient({
    *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
    * })
-   * // Fetch zero or more Todos
-   * const todos = await prisma.todo.findMany()
+   * // Fetch zero or more WorkoutSessions
+   * const workoutSessions = await prisma.workoutSession.findMany()
    * ```
    * 
    * Read more in our [docs](https://pris.ly/d/client).
@@ -94,8 +94,8 @@ export interface PrismaClientConstructor {
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Todos
- * const todos = await prisma.todo.findMany()
+ * // Fetch zero or more WorkoutSessions
+ * const workoutSessions = await prisma.workoutSession.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -189,14 +189,24 @@ export interface PrismaClient<
   }>>
 
       /**
-   * `prisma.todo`: Exposes CRUD operations for the **Todo** model.
+   * `prisma.workoutSession`: Exposes CRUD operations for the **WorkoutSession** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Todos
-    * const todos = await prisma.todo.findMany()
+    * // Fetch zero or more WorkoutSessions
+    * const workoutSessions = await prisma.workoutSession.findMany()
     * ```
     */
-  get todo(): Prisma.TodoDelegate<ExtArgs, { omit: OmitOpts }>;
+  get workoutSession(): Prisma.WorkoutSessionDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.workoutSet`: Exposes CRUD operations for the **WorkoutSet** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WorkoutSets
+    * const workoutSets = await prisma.workoutSet.findMany()
+    * ```
+    */
+  get workoutSet(): Prisma.WorkoutSetDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

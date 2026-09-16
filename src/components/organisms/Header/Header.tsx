@@ -12,7 +12,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(function Header(
 
   return (
     <header {...props} ref={ref} className={classes}>
-      <h1 className="text-xl font-semibold text-black">Todoish</h1>
+      <h1 className="text-xl font-semibold text-black">Workoutish</h1>
     </header>
   );
 });

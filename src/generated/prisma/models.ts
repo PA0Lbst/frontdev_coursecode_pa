@@ -8,5 +8,6 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Todo'
+export type * from './models/WorkoutSession'
+export type * from './models/WorkoutSet'
 export type * from './commonInputTypes'

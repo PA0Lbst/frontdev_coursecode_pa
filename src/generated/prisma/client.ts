@@ -31,8 +31,8 @@ export * from "./enums"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Todos
- * const todos = await prisma.todo.findMany()
+ * // Fetch zero or more WorkoutSessions
+ * const workoutSessions = await prisma.workoutSession.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,7 +42,12 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model Todo
+ * Model WorkoutSession
  * 
  */
-export type Todo = Prisma.TodoModel
+export type WorkoutSession = Prisma.WorkoutSessionModel
+/**
+ * Model WorkoutSet
+ * 
+ */
+export type WorkoutSet = Prisma.WorkoutSetModel

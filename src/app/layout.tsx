@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Todoish",
+  title: "Workoutish",
   description:
-    "A single-user todo app used as sample code for a frontend course.",
+    "A single-user workout tracker used as sample code for a frontend course.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
