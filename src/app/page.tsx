@@ -9,6 +9,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/actions/auth/getCurrentUser/getCurrentUser";
 import { signOut } from "@/actions/auth/signOut/signOut";
+import { listFriendships } from "@/actions/friendship/listFriendships/listFriendships";
 import { createSession } from "@/actions/workoutSession/createSession/createSession";
 import { deleteSession } from "@/actions/workoutSession/deleteSession/deleteSession";
 import { listSessions } from "@/actions/workoutSession/listSessions/listSessions";
@@ -25,6 +26,7 @@ export default async function Home() {
     redirect("/sign-in");
   }
   const sessions = await listSessions();
+  const { incoming } = await listFriendships();
   // The list only needs the session rows, not their sets.
   const rows = sessions.map(({ sets, ...session }) => ({
     ...session,
@@ -41,6 +43,7 @@ export default async function Home() {
   return (
     <WorkoutListPage
       username={user.username}
+      pendingRequestCount={incoming.length}
       signOut={signOut}
       initialSessions={rows}
       createSession={createAndOpenSession}

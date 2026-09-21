@@ -18,6 +18,7 @@ beforeEach(async () => {
   await prisma.authChallenge.deleteMany();
   await prisma.authSession.deleteMany();
   await prisma.passkey.deleteMany();
+  await prisma.friendship.deleteMany();
   await prisma.user.deleteMany();
 });
 

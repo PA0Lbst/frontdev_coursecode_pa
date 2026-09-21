@@ -56,7 +56,8 @@ export const ModelName = {
   User: 'User',
   Passkey: 'Passkey',
   AuthSession: 'AuthSession',
-  AuthChallenge: 'AuthChallenge'
+  AuthChallenge: 'AuthChallenge',
+  Friendship: 'Friendship'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -137,6 +138,17 @@ export const AuthChallengeScalarFieldEnum = {
 } as const
 
 export type AuthChallengeScalarFieldEnum = (typeof AuthChallengeScalarFieldEnum)[keyof typeof AuthChallengeScalarFieldEnum]
+
+
+export const FriendshipScalarFieldEnum = {
+  id: 'id',
+  requesterId: 'requesterId',
+  addresseeId: 'addresseeId',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type FriendshipScalarFieldEnum = (typeof FriendshipScalarFieldEnum)[keyof typeof FriendshipScalarFieldEnum]
 
 
 export const SortOrder = {

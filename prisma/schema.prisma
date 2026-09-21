@@ -31,6 +31,8 @@ model User {
   passkeys     Passkey[]
   authSessions AuthSession[]
   workouts     WorkoutSession[]
+  sentRequests     Friendship[] @relation("FriendshipRequester")
+  receivedRequests Friendship[] @relation("FriendshipAddressee")
 }
 
 model Passkey {
@@ -60,4 +62,16 @@ model AuthChallenge {
   username  String?
   userId    Int?
   expiresAt DateTime
+}
+
+model Friendship {
+  id          Int      @id @default(autoincrement())
+  requesterId Int
+  requester   User     @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addresseeId Int
+  addressee   User     @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+
+  @@unique([requesterId, addresseeId])
 }

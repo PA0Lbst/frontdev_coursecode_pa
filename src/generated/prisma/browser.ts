@@ -47,3 +47,8 @@ export type AuthSession = Prisma.AuthSessionModel
  * 
  */
 export type AuthChallenge = Prisma.AuthChallengeModel
+/**
+ * Model Friendship
+ * 
+ */
+export type Friendship = Prisma.FriendshipModel

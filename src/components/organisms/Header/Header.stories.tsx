@@ -9,11 +9,13 @@ const meta = {
   parameters: {
     layout: "centered",
     controls: {
-      include: ["username"],
+      include: ["username", "pendingRequestCount"],
     },
+    nextjs: { appDirectory: true, navigation: { pathname: "/" } },
   },
   args: {
     username: "alice",
+    pendingRequestCount: 2,
     onSignOut: fn(async () => {}),
   },
 } satisfies Meta<typeof Header>;
@@ -26,6 +28,14 @@ export const Default: Story = {
     await expect(
       canvas.getByRole("heading", { name: "Workoutish" }),
     ).toBeVisible();
+    await expect(canvas.getByRole("link", { name: "Workouts" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    await expect(canvas.getByRole("link", { name: /Friends/ })).toHaveAttribute(
+      "href",
+      "/friends",
+    );
     await userEvent.click(canvas.getByRole("button", { name: "Sign out" }));
     await expect(args.onSignOut).toHaveBeenCalled();
   },
