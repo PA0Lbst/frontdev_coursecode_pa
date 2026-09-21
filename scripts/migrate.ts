@@ -71,14 +71,19 @@ export async function migrate(opts: {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
-  const url = process.env.DATABASE_URL ?? "file:./prisma/dev.db";
+  // DATABASE_TURSO_* are set by the Vercel Turso integration (prefix DATABASE).
+  const url =
+    process.env.DATABASE_URL ||
+    process.env.DATABASE_TURSO_DATABASE_URL ||
+    "file:./prisma/dev.db";
   if (process.env.VERCEL && !url.startsWith("libsql:")) {
     console.error("DATABASE_URL must be a libsql:// URL on Vercel.");
     process.exit(1);
   }
   migrate({
     url,
-    authToken: process.env.TURSO_AUTH_TOKEN,
+    authToken:
+      process.env.TURSO_AUTH_TOKEN || process.env.DATABASE_TURSO_AUTH_TOKEN,
     dir: join(process.cwd(), "prisma", "migrations"),
     allowFile: process.argv.includes("--allow-file"),
   }).catch((error) => {

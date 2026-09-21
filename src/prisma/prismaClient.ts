@@ -8,8 +8,13 @@ const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 function createClient() {
   const adapter = new PrismaLibSql({
-    url: process.env.DATABASE_URL ?? "file:./prisma/dev.db",
-    authToken: process.env.TURSO_AUTH_TOKEN,
+    // DATABASE_TURSO_* are set by the Vercel Turso integration (prefix DATABASE).
+    url:
+      process.env.DATABASE_URL ||
+      process.env.DATABASE_TURSO_DATABASE_URL ||
+      "file:./prisma/dev.db",
+    authToken:
+      process.env.TURSO_AUTH_TOKEN || process.env.DATABASE_TURSO_AUTH_TOKEN,
   });
   return new PrismaClient({ adapter });
 }

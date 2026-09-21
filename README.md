@@ -72,21 +72,15 @@ Review Prisma Schema in `prisma\schema.prisma`
 
 ## Deploy to Vercel
 
-The app runs on Vercel with a hosted SQLite database on [Turso](https://turso.tech/). Vercel cannot keep a local `.db` file.
+The app runs on Vercel with a hosted SQLite database on [Turso](https://turso.tech/), created from the Vercel dashboard. Vercel cannot keep a local `.db` file.
 
-1. Install the Turso CLI and log in: `brew install tursodatabase/tap/turso`, then `turso auth signup` (or `turso auth login`).
-2. Create the production database and read its URL and token:
-   ```bash
-   turso db create workout-prod
-   turso db show workout-prod --url
-   turso db tokens create workout-prod
-   ```
-3. Do the same for `workout-preview` (used by Preview deployments, so branches never touch production data).
-4. Push the repo to GitHub, then in Vercel: *Add New → Project* → import the repository.
-5. Before the first deploy, in *Settings → Environment Variables* set `DATABASE_URL` (the `libsql://…` URL) and `TURSO_AUTH_TOKEN` per environment: Production → `workout-prod`, Preview → `workout-preview`. `DATABASE_URL` must exist at install time because `prisma generate` reads it. Then click *Deploy*. The first build creates the schema; production starts empty.
-6. Optional, custom domain: add it in Vercel, set `WEBAUTHN_RP_ID` (host only) and `WEBAUTHN_ORIGIN` (`https://…`), then redeploy.
+1. Push the repo to GitHub, then in Vercel: *Add New → Project* → import the repository. Do not deploy yet.
+2. In the project, *Storage* → *Create Database* → **Turso** → Starter plan. Connect it to the project for Production and Preview with the custom prefix `DATABASE`. This creates `DATABASE_TURSO_DATABASE_URL` and `DATABASE_TURSO_AUTH_TOKEN`, which the app reads (an explicit `DATABASE_URL` / `TURSO_AUTH_TOKEN` takes precedence).
+3. In *Settings → Environment Variables*, delete any empty `DATABASE_URL` that Vercel detected from `.env.example`.
+4. Click *Deploy*. The first build creates the schema; production starts empty.
+5. Optional, custom domain: add it in Vercel, set `WEBAUTHN_RP_ID` (host only) and `WEBAUTHN_ORIGIN` (`https://…`), then redeploy.
 
-Passkeys are tied to the domain: on Vercel `WEBAUTHN_RP_ID` and `WEBAUTHN_ORIGIN` are derived from the deployment URL, and changing the domain later invalidates existing passkeys.
+Passkeys are tied to the domain: on Vercel `WEBAUTHN_RP_ID` and `WEBAUTHN_ORIGIN` are derived from the deployment URL, and changing the domain later invalidates existing passkeys. Preview deployments share the database unless you enable a database branch per deployment in the Turso integration.
 
 ### Smoke test after the first deploy
 
