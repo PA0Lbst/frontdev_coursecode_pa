@@ -8,14 +8,14 @@ Coding conventions for this repo live in [`AGENTS.md`](./AGENTS.md).
 
 - [React 19](https://react.dev/) — UI library; `src/components/`
 - [Next.js](https://nextjs.org/) — App Router; `src/app/page.tsx`, `src/app/layout.tsx`
-- [Prisma](https://www.prisma.io/) — SQLite ORM; `prisma/schema.prisma`, `src/prisma/prismaClient.ts`
+- [Prisma](https://www.prisma.io/) — ORM; `prisma/schema.prisma`, `src/prisma/prismaClient.ts`
 - [Storybook](https://storybook.js.org/) — UI in isolation; `.storybook/`, colocated `*.stories.tsx`
 - [Atomic Design](https://atomicdesign.bradfrost.com/chapter-2/) — UI folder map; `src/components/{atoms,molecules,organisms,templates,pages}`
 - [Tailwind CSS](https://tailwindcss.com/) — utility classes; `src/app/globals.css`
 - [Vite](https://vite.dev/) — Storybook and Vitest toolchain, not the Next.js bundler; `.storybook/main.ts`, `vitest.config.ts`
 - [Vitest](https://vitest.dev/) — component/story/action tests; colocated `*.test.tsx`, `tests/actions/`
 - [Playwright](https://playwright.dev/) — e2e; `tests/e2e/`, `playwright.config.ts`
-- SQLite — local DB used by Prisma; `prisma/dev.db` is gitignored and created on migrate; `prisma/schema.prisma`
+- SQLite via [libSQL](https://github.com/tursodatabase/libsql) locally and [Turso](https://turso.tech/) in production; `prisma/dev.db` is gitignored and created on migrate; `prisma/schema.prisma`
 
 ## Setup
 
@@ -37,6 +37,7 @@ Execute using `npm run [name of script]`
 - `test:e2e` — Playwright e2e
 - `prisma:migrate` — apply existing migrations; creates `prisma/dev.db`
 - `prisma:generate` — generate the Prisma client
+- `db:migrate` — apply migrations to a remote `libsql://` database (skipped for local `file:` URLs; runs on `build`)
 
 ## File structure
 
@@ -54,6 +55,7 @@ Execute using `npm run [name of script]`
 │   ├── prisma/prismaClient.ts       # Prisma client used by actions
 │   └── generated/prisma/            # generated client; do not edit
 ├── prisma/                          # schema and migrations
+├── scripts/migrate.ts               # applies migrations to Turso (libSQL)
 ├── .storybook/                      # Storybook config
 ├── tests/
 │   ├── actions/                     # action tests (`prisma/test.db`)
@@ -67,6 +69,31 @@ Execute using `npm run [name of script]`
 To explore the codebase, start with `src\app\page.tsx`.
 
 Review Prisma Schema in `prisma\schema.prisma`
+
+## Deploy to Vercel
+
+The app runs on Vercel with a hosted SQLite database on [Turso](https://turso.tech/). Vercel cannot keep a local `.db` file.
+
+1. Install the Turso CLI and log in: `brew install tursodatabase/tap/turso`, then `turso auth signup` (or `turso auth login`).
+2. Create the production database and read its URL and token:
+   ```bash
+   turso db create workout-prod
+   turso db show workout-prod --url
+   turso db tokens create workout-prod
+   ```
+3. Do the same for `workout-preview` (used by Preview deployments, so branches never touch production data).
+4. Push the repo to GitHub, then in Vercel: *Add New → Project* → import the repository.
+5. Before the first deploy, in *Settings → Environment Variables* set `DATABASE_URL` (the `libsql://…` URL) and `TURSO_AUTH_TOKEN` per environment: Production → `workout-prod`, Preview → `workout-preview`. `DATABASE_URL` must exist at install time because `prisma generate` reads it. Then click *Deploy*. The first build creates the schema; production starts empty.
+6. Optional, custom domain: add it in Vercel, set `WEBAUTHN_RP_ID` (host only) and `WEBAUTHN_ORIGIN` (`https://…`), then redeploy.
+
+Passkeys are tied to the domain: on Vercel `WEBAUTHN_RP_ID` and `WEBAUTHN_ORIGIN` are derived from the deployment URL, and changing the domain later invalidates existing passkeys.
+
+### Smoke test after the first deploy
+
+- Register a username with a passkey.
+- Create a workout with a set.
+- Sign out and sign back in with the passkey.
+- Redeploy and confirm the workout is still there.
 
 ## Adding a feature (spec-driven development)
 

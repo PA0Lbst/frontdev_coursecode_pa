@@ -2,9 +2,14 @@
   "name": "todoish",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "build": "npm run db:migrate && next build",
+    "db:migrate": "node scripts/migrate.ts",
     "start": "next start",
     "lint": "eslint",
     "prisma:migrate": "prisma migrate dev",
@@ -15,7 +20,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@prisma/adapter-better-sqlite3": "^7.10.0",
+    "@prisma/adapter-libsql": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "@simplewebauthn/browser": "^14.0.0",
     "@simplewebauthn/server": "^14.0.2",

@@ -79,11 +79,6 @@ export default defineConfig({
           fileParallelism: false,
           maxWorkers: 1,
           pool: 'forks',
-          server: {
-            deps: {
-              external: ['better-sqlite3', '@prisma/adapter-better-sqlite3'],
-            },
-          },
         },
       },
     ],

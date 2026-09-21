@@ -2,7 +2,7 @@
 
 This repo is a Next.js App Router app. Today `/` is a single-user todo list (`Todoish`).
 
-Stack that differs from older training data: Next 16, React 19, Prisma 7 (SQLite; generated client in `src/generated/prisma`), Tailwind 4, Storybook 10, Vitest browser + Playwright.
+Stack that differs from older training data: Next 16, React 19, Prisma 7 (SQLite via libSQL, Turso in production; generated client in `src/generated/prisma`), Tailwind 4, Storybook 10, Vitest browser + Playwright.
 
 Specs live under `specs/`. Implement the spec, then encode only **durable** conventions here. Leave the Next.js block at the bottom unchanged.
 
@@ -103,6 +103,8 @@ Canonical example: `src/actions/workoutSet/createSet/createSet.ts`.
 - Thin Prisma: call `@/prisma/prismaClient` directly. Do not add a service or repository layer.
 - Shared helpers live in `src/actions/{resource}/helpers.ts`, only when more than one action in that resource needs the same parsing (e.g. `create`/`update`). That file is not a Server Action (no `"use server"`). Trim and normalize there; throw before write if required fields are empty. A resource with a single mutating action (e.g. `workoutSession`) can parse inline instead of adding a helpers file.
 - Do not add Route Handlers for this app's backend.
+- The Prisma client uses `@prisma/adapter-libsql`: `file:` URLs locally, `libsql://` (Turso) in production, with `TURSO_AUTH_TOKEN`.
+- Local databases are migrated with `prisma migrate`. Remote `libsql://` databases are migrated with `npm run db:migrate` (`scripts/migrate.ts`, run automatically by `build`). Author new migrations with `npm run prisma:migrate`.
 
 Workout helper example (`src/actions/workoutSet/helpers.ts`): trim `exercise` and throw if empty; `reps` must be a positive integer; `weight` must be a non-negative number.
 
