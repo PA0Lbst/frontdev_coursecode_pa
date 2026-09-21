@@ -13,8 +13,9 @@ Create a workout, open it, and add exercises (sets) inside it, so each exercise 
 
 ### Routes
 
-- `/` becomes the workout list: newest first, create form (optional name), delete button per workout. No more auto-created session.
+- `/` becomes the workout list: newest first, create form (optional name, opens the workout on success), delete button per workout. No more auto-created session.
 - New `/workouts/[id]`: shows that workout's sets (existing `WorkoutPage` behavior, moved here) with a link back to `/`. Non-numeric or unknown id → `notFound()`.
+- Creating a workout redirects to `/workouts/[id]` of the new workout; the route injects a wrapper action that calls `createSession` then `redirect()`.
 - Both routes: async Server Components, `force-dynamic`, actions passed as props.
 
 ### Backend
@@ -25,7 +26,7 @@ Create a workout, open it, and add exercises (sets) inside it, so each exercise 
 
 ### UI
 
-- New `WorkoutListPage` (pages layer): list, create form, delete; props `initialSessions`, `createSession`, `deleteSession`. Client state per AGENTS.md: prepend on create (stay on list, no redirect), remove on delete, coerce `createdAt`, generic `role="alert"` error, no refetch.
+- New `WorkoutListPage` (pages layer): list, create form, delete; props `initialSessions`, `createSession`, `deleteSession`. Client state per AGENTS.md: create opens the new workout (no local prepend), remove on delete, coerce `createdAt`, generic `role="alert"` error, no refetch.
 - A workout displays its `name`, or `Workout of <createdAt date>` when name is null (list and detail).
 - Each list item links to `/workouts/[id]`.
 - `WorkoutPage` gets the workout title and a back link (`/`); its existing props/behavior otherwise unchanged.
@@ -34,7 +35,7 @@ Create a workout, open it, and add exercises (sets) inside it, so each exercise 
 
 - Action test for `getSession` (found / missing).
 - Component tests + `Default` story for `WorkoutListPage`; update `WorkoutPage` tests/story for title and back link.
-- Update `tests/e2e/workout.spec.ts`: create a workout (unique name) → open it → add an exercise → it appears; back on `/`, delete the workout.
+- Update `tests/e2e/workout.spec.ts`: create a workout (unique name) → lands on its page → add an exercise → it appears; back on `/`, delete the workout.
 
 ## Out of scope
 

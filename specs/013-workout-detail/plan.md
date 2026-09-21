@@ -59,7 +59,7 @@ export async function getSession(id: number) {
 
 ## `WorkoutListPage` (client)
 
-- Props: `initialSessions?: WorkoutSession[]`, `createSession: (input: { name?: string | null }) => Promise<WorkoutSession>`, `deleteSession: (id: number) => Promise<void>`.
+- Props: `initialSessions?: WorkoutSession[]`, `createSession: (input: { name?: string | null }) => Promise<void>` (the injected action redirects to the new workout; no local prepend), `deleteSession: (id: number) => Promise<void>`.
 - State: sessions (`toClientSession` coerces `createdAt` to `Date`, initial data already newest-first), `errorMessage`.
 - Create form (inline in the page, no new molecule): label "Name" + `Input`, `Add` button (`variant="primary"`), native `disabled` while pending; clear input only on success. Empty name allowed. Prepend result on success.
 - List: `<ul>` of `<li>`; each has `<Link href={`/workouts/${id}`}>{workoutLabel(session)}</Link>` (`next/link`) and a `Delete` button (`variant="danger"` if Button has it, else default variant; check `Button.tsx`), disabled while its own delete is pending. Remove on success.
@@ -81,7 +81,12 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const sessions = await listSessions();
   const rows = sessions.map(({ sets, ...session }) => session);
-  return <WorkoutListPage initialSessions={rows} createSession={createSession} deleteSession={deleteSession} />;
+  async function createAndOpenSession(input: { name?: string | null }) {
+    "use server";
+    const session = await createSession(input);
+    redirect(`/workouts/${session.id}`);
+  }
+  return <WorkoutListPage initialSessions={rows} createSession={createAndOpenSession} deleteSession={deleteSession} />;
 }
 ```
 
@@ -94,7 +99,7 @@ export default async function Home() {
 ## Tests
 
 - `getSession.test.ts` (node, `prisma/test.db`): create session + a set → returns session with `sets`; unknown id → `null`.
-- `WorkoutListPage.test.tsx`: `vi.fn()` action props only. Cases: empty message; renders labels + links with correct `href` (named and unnamed → `Workout of DD/MM/YYYY`); create prepends and clears input; delete removes item; failing create/delete shows alert and leaves list unchanged.
+- `WorkoutListPage.test.tsx`: `vi.fn()` action props only. Cases: empty message; renders labels + links with correct `href` (named and unnamed → `Workout of DD/MM/YYYY`); create calls `createSession` and clears input; delete removes item; failing create/delete shows alert and leaves list unchanged.
 - `WorkoutListPage.stories.tsx`: `Pages/WorkoutListPage`, `layout: "fullscreen"`, `tags: ["autodocs"]`, `parameters.controls.include: []` with action/data props hidden via `argTypes` table disable (same as `WorkoutPage` story), one `Default` story with a `play` that creates a workout and asserts it appears.
 - `WorkoutPage` test + story: pass `title`; assert title heading and back link (`href="/"`).
 - E2E (`workout.spec.ts`): unique workout name → create on `/` → click its link → assert URL `/workouts/\d+` and title → add exercise (existing steps: add, reload, edit, delete) → click `Back to workouts` → delete the workout → assert gone (also after reload). Replace `page.goto("/")` reloads inside the set flow with `page.reload()`.

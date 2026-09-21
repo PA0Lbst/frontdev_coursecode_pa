@@ -23,13 +23,13 @@ Do not add npm packages. Do not edit `prisma/schema.prisma` or `src/generated/pr
 ## 4. `WorkoutListPage`
 
 - [x] Create `WorkoutListPage.tsx`: props `initialSessions`, `createSession`, `deleteSession`; create form (optional name), list with `next/link` per workout, `Delete` button per item, empty message `No workouts yet.`.
-- [x] State per `AGENTS.md`: prepend on create, remove on delete, coerce `createdAt`, generic `role="alert"` error + rethrow, clear on success, native `disabled` while pending, no refetch.
+- [x] State per `AGENTS.md`: create opens the workout via the injected action (no local prepend, no client router), remove on delete, coerce `createdAt`, generic `role="alert"` error + rethrow, clear on success, native `disabled` while pending, no refetch.
 - [x] Create `WorkoutListPage.stories.tsx` (`Pages/WorkoutListPage`, fullscreen, autodocs, one `Default` with `play`).
 - [x] Create `WorkoutListPage.test.tsx` (empty, labels + hrefs, create, delete, error cases; `vi.fn()` props only).
 
 ## 5. Home route
 
-- [x] Rewrite `src/app/page.tsx`: `force-dynamic`, `listSessions` mapped to rows without `sets`, render `WorkoutListPage` with `createSession` and `deleteSession`. Remove auto-created session and `addSet`.
+- [x] Rewrite `src/app/page.tsx`: `force-dynamic`, `listSessions` mapped to rows without `sets`, render `WorkoutListPage` with a `createAndOpenSession` wrapper (`"use server"`: `createSession` then `redirect(`/workouts/${id}`)`) and `deleteSession`. Remove auto-created session and `addSet`.
 
 ## 6. E2E
 

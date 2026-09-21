@@ -31,12 +31,19 @@ export default async function Home() {
     setCount: sets.length,
   }));
 
+  // Create the workout, then open it instead of staying on the list.
+  async function createAndOpenSession(input: { name?: string | null }) {
+    "use server";
+    const session = await createSession(input);
+    redirect(`/workouts/${session.id}`);
+  }
+
   return (
     <WorkoutListPage
       username={user.username}
       signOut={signOut}
       initialSessions={rows}
-      createSession={createSession}
+      createSession={createAndOpenSession}
       deleteSession={deleteSession}
     />
   );
