@@ -15,6 +15,10 @@ const dirname =
  */
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
+  // next/link reads process.env at import time, which browser tests lack.
+  define: {
+    'process.env': {},
+  },
   resolve: {
     alias: {
       '@': path.resolve(dirname, './src'),
