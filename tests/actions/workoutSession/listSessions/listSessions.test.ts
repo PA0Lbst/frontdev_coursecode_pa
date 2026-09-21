@@ -1,7 +1,13 @@
-import { expect, test } from "vitest";
+import { beforeEach, expect, test } from "vitest";
 import { createSession } from "@/actions/workoutSession/createSession/createSession";
 import { createSet } from "@/actions/workoutSet/createSet/createSet";
 import { listSessions } from "@/actions/workoutSession/listSessions/listSessions";
+
+import { signInAs, signOutCookie } from "../../helpers/auth";
+
+beforeEach(async () => {
+  await signInAs("alice");
+});
 
 // SQLite's CURRENT_TIMESTAMP (used for the createdAt default) has second
 // resolution, so ordering assertions need a real gap between writes.
@@ -40,3 +46,19 @@ test("returns sessions newest-first, each with sets ordered oldest-first", async
     "Bench Press",
   ]);
 }, 10000);
+
+test("returns only the current user's sessions", async () => {
+  await createSession({ name: "Alice's" });
+  signOutCookie();
+  await signInAs("bob");
+  const bobs = await createSession({ name: "Bob's" });
+
+  const sessions = await listSessions();
+
+  expect(sessions.map((session) => session.id)).toEqual([bobs.id]);
+});
+
+test("rejects when signed out", async () => {
+  signOutCookie();
+  await expect(listSessions()).rejects.toThrow("Unauthorized");
+});

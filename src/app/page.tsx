@@ -6,6 +6,9 @@
  */
 
 // server side, DB code and actions
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/actions/auth/getCurrentUser/getCurrentUser";
+import { signOut } from "@/actions/auth/signOut/signOut";
 import { createSession } from "@/actions/workoutSession/createSession/createSession";
 import { deleteSession } from "@/actions/workoutSession/deleteSession/deleteSession";
 import { listSessions } from "@/actions/workoutSession/listSessions/listSessions";
@@ -17,6 +20,10 @@ import { WorkoutListPage } from "@/components/pages/WorkoutListPage/WorkoutListP
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/sign-in");
+  }
   const sessions = await listSessions();
   // The list only needs the session rows, not their sets.
   const rows = sessions.map(({ sets, ...session }) => ({
@@ -26,6 +33,8 @@ export default async function Home() {
 
   return (
     <WorkoutListPage
+      username={user.username}
+      signOut={signOut}
       initialSessions={rows}
       createSession={createSession}
       deleteSession={deleteSession}

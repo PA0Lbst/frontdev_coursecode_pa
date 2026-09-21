@@ -10,6 +10,8 @@ model WorkoutSession {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   name      String?
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   sets      WorkoutSet[]
 }
 
@@ -21,4 +23,41 @@ model WorkoutSet {
   exercise  String
   reps      Int
   weight    Float
+}
+model User {
+  id           Int              @id @default(autoincrement())
+  username     String           @unique
+  createdAt    DateTime         @default(now())
+  passkeys     Passkey[]
+  authSessions AuthSession[]
+  workouts     WorkoutSession[]
+}
+
+model Passkey {
+  id         String   @id
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publicKey  Bytes
+  counter    Int
+  transports String?
+  label      String?
+  createdAt  DateTime @default(now())
+}
+
+model AuthSession {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model AuthChallenge {
+  id        Int      @id @default(autoincrement())
+  challenge String
+  purpose   String
+  username  String?
+  userId    Int?
+  expiresAt DateTime
 }

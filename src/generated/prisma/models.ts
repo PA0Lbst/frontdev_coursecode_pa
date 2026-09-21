@@ -10,4 +10,8 @@
  */
 export type * from './models/WorkoutSession'
 export type * from './models/WorkoutSet'
+export type * from './models/User'
+export type * from './models/Passkey'
+export type * from './models/AuthSession'
+export type * from './models/AuthChallenge'
 export type * from './commonInputTypes'

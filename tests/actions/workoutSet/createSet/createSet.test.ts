@@ -1,9 +1,16 @@
-import { expect, test } from "vitest";
+import { beforeEach, expect, test } from "vitest";
 import { createSet } from "@/actions/workoutSet/createSet/createSet";
+import { signInAs, signOutCookie } from "../../helpers/auth";
 import { prisma } from "@/prisma/prismaClient";
 
+let userId: number;
+
+beforeEach(async () => {
+  userId = (await signInAs("alice")).id;
+});
+
 async function makeSession() {
-  return prisma.workoutSession.create({ data: {} });
+  return prisma.workoutSession.create({ data: { userId } });
 }
 
 test("persists and returns a set with generated id and createdAt", async () => {
@@ -88,4 +95,23 @@ test("rejects an unknown sessionId", async () => {
   ).rejects.toThrow();
 
   expect(await prisma.workoutSet.count()).toBe(0);
+});
+
+test("cannot add a set to another user's session", async () => {
+  const session = await makeSession();
+  signOutCookie();
+  await signInAs("bob");
+
+  await expect(
+    createSet({ sessionId: session.id, exercise: "Squat", reps: 5, weight: 60 }),
+  ).rejects.toThrow("Not found");
+  expect(await prisma.workoutSet.count()).toBe(0);
+});
+
+test("rejects when signed out", async () => {
+  const session = await makeSession();
+  signOutCookie();
+  await expect(
+    createSet({ sessionId: session.id, exercise: "Squat", reps: 5, weight: 60 }),
+  ).rejects.toThrow("Unauthorized");
 });
