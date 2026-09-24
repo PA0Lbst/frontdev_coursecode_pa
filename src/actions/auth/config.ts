@@ -10,7 +10,7 @@ export const rpID = process.env.WEBAUTHN_RP_ID ?? vercelHost ?? "localhost";
 export const origin =
   process.env.WEBAUTHN_ORIGIN ??
   (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
-export const rpName = "Workoutish";
+export const rpName = "Gymtiiime";
 // Returned (not thrown): Next redacts thrown Server Action errors in production.
 export const USERNAME_TAKEN = "That username is taken.";
 export const LAST_PASSKEY = "You need at least one passkey.";

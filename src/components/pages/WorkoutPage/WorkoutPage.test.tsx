@@ -54,14 +54,14 @@ function mockActions() {
   };
 }
 
-test("empty initialSets shows empty message, Add, and Workoutish heading", async () => {
+test("empty initialSets shows empty message, Add, and Gymtiiime heading", async () => {
   const screen = await render(<WorkoutPage title="Push day" {...mockActions()} />);
   await expect.element(screen.getByText("No sets yet.")).toBeVisible();
   await expect
     .element(screen.getByRole("button", { name: "Add" }))
     .toBeVisible();
   await expect
-    .element(screen.getByRole("heading", { name: "Workoutish" }))
+    .element(screen.getByRole("heading", { name: "Gymtiiime" }))
     .toBeVisible();
 });
 

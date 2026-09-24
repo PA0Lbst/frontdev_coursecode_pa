@@ -1,21 +1,55 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light dark;
+  --background: #fafafa;
+  --foreground: #000000;
+  --surface: #ffffff;
+  --surface-muted: #f4f4f5;
+  --surface-muted-hover: #e4e4e7;
+  --muted: #71717a;
+  --border: #e4e4e7;
+  --border-strong: #a1a1aa;
+  --primary: #000000;
+  --primary-hover: #27272a;
+  --primary-foreground: #ffffff;
+  --danger: #dc2626;
+  --danger-surface: #fef2f2;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-muted-hover: var(--surface-muted-hover);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-danger: var(--danger);
+  --color-danger-surface: var(--danger-surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #09090b;
+    --foreground: #fafafa;
+    --surface: #18181b;
+    --surface-muted: #27272a;
+    --surface-muted-hover: #3f3f46;
+    --muted: #a1a1aa;
+    --border: #27272a;
+    --border-strong: #52525b;
+    --primary: #fafafa;
+    --primary-hover: #e4e4e7;
+    --primary-foreground: #09090b;
+    --danger: #f87171;
+    --danger-surface: #450a0a;
   }
 }
 

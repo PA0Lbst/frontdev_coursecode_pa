@@ -92,11 +92,11 @@ const AccountPage = function AccountPage({
     >
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
         <h2 className="text-lg font-semibold">Passkeys</h2>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-muted">
           Add a second passkey so you can not be locked out.
         </p>
         {errorMessage ? (
-          <p className="text-red-600" role="alert">
+          <p className="text-danger" role="alert">
             {errorMessage}
           </p>
         ) : null}
@@ -104,11 +104,11 @@ const AccountPage = function AccountPage({
           {passkeys.map((passkey, index) => (
             <li
               key={passkey.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-white px-4 py-3"
+              className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface px-4 py-3"
             >
               <span>
                 {passkey.label ?? `Passkey ${index + 1}`}
-                <span className="ml-2 text-sm text-zinc-500">
+                <span className="ml-2 text-sm text-muted">
                   {passkey.createdAt.toISOString().slice(0, 10)}
                 </span>
               </span>

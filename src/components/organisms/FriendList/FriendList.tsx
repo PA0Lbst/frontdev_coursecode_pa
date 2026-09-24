@@ -32,7 +32,7 @@ const FriendList = function FriendList({ friends, onRemove }: FriendListProps) {
         {friends.map((entry) => (
           <li
             key={entry.id}
-            className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3"
+            className="flex items-center gap-3 rounded-xl border border-border bg-surface p-3"
           >
             <Link
               href={`/friends/${entry.user.username}`}

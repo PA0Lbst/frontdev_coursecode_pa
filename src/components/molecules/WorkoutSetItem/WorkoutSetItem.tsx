@@ -132,10 +132,10 @@ const WorkoutSetItem = function WorkoutSetItem({
         <>
           <div className="flex items-center gap-3">
             <p className="min-w-0 flex-1 font-semibold">{set.exercise}</p>
-            <p className="shrink-0 text-sm text-zinc-500">
+            <p className="shrink-0 text-sm text-muted">
               {set.reps} × {set.weight} kg
             </p>
-            <p className="shrink-0 text-sm text-zinc-500">
+            <p className="shrink-0 text-sm text-muted">
               {set.createdAt.toLocaleDateString("en-US")}
             </p>
             {readOnly ? null : (

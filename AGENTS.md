@@ -40,6 +40,10 @@ Plain class maps / conditionals inside the component. Do not add CVA, clsx, tail
 
 Rely on native element semantics and keyboard behavior. Loading uses native `disabled` plus `aria-disabled`.
 
+## Theming
+
+Dark mode follows `prefers-color-scheme` only (no toggle, no JS). Colors come from the tokens in `src/app/globals.css` (`background`, `foreground`, `surface`, `surface-muted`, `muted`, `border`, `primary`, `danger`, …). Do not hardcode `white`, `black`, `zinc-*`, `red-*` or `dark:` utilities in components; add a token (light + dark value + `@theme inline` entry) when a new color role is needed.
+
 ## Prisma in UI
 
 Row types come from `@/generated/prisma/browser`. Do not import `@/prisma/prismaClient` or the generated server client in UI. Do not edit `src/generated/prisma`.

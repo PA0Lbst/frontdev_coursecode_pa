@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Workoutish",
+  title: "Gymtiiime",
   description:
     "A single-user workout tracker used as sample code for a frontend course.",
 };

@@ -146,7 +146,7 @@ const SignInPage = function SignInPage({
         ) : (
           <>
             {errorMessage ? (
-              <p className="text-red-600" role="alert">
+              <p className="text-danger" role="alert">
                 {errorMessage}
               </p>
             ) : null}
