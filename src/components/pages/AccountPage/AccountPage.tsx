@@ -10,6 +10,7 @@ import type {
 import { useState } from "react";
 import { Button } from "@/components/atoms/Button/Button";
 import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
+import { setPasskeyHint } from "@/data/passkeyHint";
 
 export type PasskeyRow = { id: string; label: string | null; createdAt: Date };
 
@@ -58,6 +59,7 @@ const AccountPage = function AccountPage({
       const { challengeId, options } = await startAddPasskey();
       const response = await runRegistration({ optionsJSON: options });
       const added = await finishAddPasskey({ challengeId, response });
+      setPasskeyHint();
       setPasskeys((current) => [...current, toClientPasskey(added)]);
       setErrorMessage(null);
     } catch {

@@ -14,7 +14,8 @@ const meta = {
     autoPrompt: false,
     startRegistration: fn(),
     finishRegistration: fn(),
-    startAuthentication: fn(),
+    // Keeps the autofill request armed on load pending in Storybook.
+    startAuthentication: fn(() => new Promise<never>(() => {})),
     finishAuthentication: fn(),
   },
   argTypes: {

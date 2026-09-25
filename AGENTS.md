@@ -134,6 +134,7 @@ Todo: `page.tsx` calls `listTodos` and renders `TodoPage` with `initialTodos`, `
 
 - Apply the returned row locally. Do not refetch the list after mutations.
 - Coerce serialized `Date` fields to `Date` on initial data and every action result before putting them in state.
+- `localStorage` only for non-identifying UI hints (e.g. `src/data/passkeyHint.ts`). Wrap every access in `try/catch`; the app must work when storage is empty or throws.
 
 Todo: prepend on create; coerce `createdAt`.
 

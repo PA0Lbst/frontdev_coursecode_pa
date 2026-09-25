@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { addVirtualAuthenticator, register } from "./helpers/auth";
+import {
+  addVirtualAuthenticator,
+  register,
+  registerWith,
+  setUserPresence,
+} from "./helpers/auth";
 
 test("signed-out visitors are sent to /sign-in", async ({ page }) => {
   await page.goto("/");
@@ -9,7 +14,8 @@ test("signed-out visitors are sent to /sign-in", async ({ page }) => {
 });
 
 test("register, sign out, sign back in with the passkey", async ({ page }) => {
-  const username = await register(page);
+  const auth = await addVirtualAuthenticator(page);
+  const username = await registerWith(page);
   const workout = `e2e-auth-${Date.now()}`;
 
   await page.getByRole("textbox", { name: "Name" }).fill(workout);
@@ -19,6 +25,7 @@ test("register, sign out, sign back in with the passkey", async ({ page }) => {
   await expect(page.getByRole("link", { name: workout })).toBeVisible();
   await expect(page.getByRole("link", { name: username })).toBeVisible();
 
+  await setUserPresence(auth, false);
   await page.getByRole("button", { name: "Sign out" }).click();
   // An explicit sign-out must not be undone by the automatic attempt.
   await expect(page).toHaveURL(/\/sign-in\?signedOut=1$/);
@@ -27,6 +34,7 @@ test("register, sign out, sign back in with the passkey", async ({ page }) => {
   ).toBeVisible();
   await expect(page).toHaveURL(/\/sign-in\?signedOut=1$/);
 
+  await setUserPresence(auth, true);
   await page.getByRole("button", { name: "Sign in with passkey" }).click();
   await expect(page).toHaveURL("/");
   await expect(page.getByRole("link", { name: workout })).toBeVisible();
@@ -61,7 +69,30 @@ test("opening /sign-in without a passkey ends on the create-account form", async
     page.getByRole("button", { name: "Sign in with passkey" }),
   ).toBeVisible();
   await expect(page.locator("p[role=alert]")).toHaveCount(0);
+  await expect(page.getByRole("status")).toHaveCount(0);
   await expect(page).toHaveURL(/\/sign-in$/);
+});
+
+test("without the hint, the sheet only opens on the button", async ({
+  page,
+}) => {
+  const auth = await addVirtualAuthenticator(page);
+  await registerWith(page);
+  await setUserPresence(auth, false);
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page).toHaveURL(/\/sign-in\?signedOut=1$/);
+  await page.evaluate(() => localStorage.clear());
+
+  await page.goto("/sign-in");
+  await expect(
+    page.getByRole("button", { name: "Create account" }),
+  ).toBeVisible();
+  await expect(page.getByRole("status")).toHaveCount(0);
+  await expect(page).toHaveURL(/\/sign-in$/);
+
+  await setUserPresence(auth, true);
+  await page.getByRole("button", { name: "Sign in with passkey" }).click();
+  await expect(page).toHaveURL("/");
 });
 
 test("the account page lists the passkey and refuses to remove the last one", async ({
