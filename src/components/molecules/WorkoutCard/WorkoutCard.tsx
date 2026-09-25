@@ -52,20 +52,20 @@ const WorkoutCard = function WorkoutCard({
   }
 
   return (
-    <article className="relative rounded-xl border border-border bg-surface shadow-sm hover:shadow-md">
+    <article className="relative rounded-xl border border-zinc-200 bg-white shadow-sm hover:shadow-md">
       <Link
         href={href}
-        className={`block rounded-xl p-4 ${onDelete ? "pr-16" : "pr-4"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+        className={`block rounded-xl p-4 ${onDelete ? "pr-16" : "pr-4"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black`}
       >
         <h3 className="truncate text-lg font-semibold">{label}</h3>
-        <p className="text-sm text-muted">{formatWorkoutDate(date)}</p>
-        <p className="text-sm text-muted">{count}</p>
+        <p className="text-sm text-zinc-500">{formatWorkoutDate(date)}</p>
+        <p className="text-sm text-zinc-500">{count}</p>
       </Link>
       {onDelete ? (
       <div ref={menuRef} className="absolute right-2 top-2">
         <button
           type="button"
-          className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-xl leading-none text-muted hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-xl leading-none text-zinc-600 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
           aria-label={`Actions for ${label}`}
           aria-haspopup="menu"
           aria-expanded={open}
@@ -76,14 +76,14 @@ const WorkoutCard = function WorkoutCard({
         {open ? (
           <div
             role="menu"
-            className="absolute right-0 top-12 z-10 min-w-40 rounded-xl border border-border bg-surface p-1 shadow-md"
+            className="absolute right-0 top-12 z-10 min-w-40 rounded-xl border border-zinc-200 bg-white p-1 shadow-md"
           >
             <button
               type="button"
               role="menuitem"
               disabled={deleting}
               onClick={handleDelete}
-              className="flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-danger hover:bg-danger-surface focus-visible:outline-2 focus-visible:outline-danger disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-red-600 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg
                 aria-hidden="true"

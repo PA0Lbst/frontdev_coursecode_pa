@@ -26,7 +26,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   play: async ({ canvas, args, userEvent }) => {
     await expect(
-      canvas.getByRole("heading", { name: "Gymtiiime" }),
+      canvas.getByRole("heading", { name: "Workoutish" }),
     ).toBeVisible();
     await expect(canvas.getByRole("link", { name: "Workouts" })).toHaveAttribute(
       "aria-current",

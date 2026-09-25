@@ -2,7 +2,6 @@
 
 import {
   browserSupportsWebAuthn,
-  browserSupportsWebAuthnAutofill,
   startAuthentication as runAuthentication,
   startRegistration as runRegistration,
 } from "@simplewebauthn/browser";
@@ -17,15 +16,10 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/atoms/Button/Button";
 import { Input } from "@/components/atoms/Input/Input";
 import { PageTemplate } from "@/components/templates/PageTemplate/PageTemplate";
-import {
-  clearPasskeyHint,
-  hasPasskeyHint,
-  setPasskeyHint,
-} from "@/data/passkeyHint";
 import { isValidUsername } from "@/data/username";
 
 export type SignInPageProps = {
-  // Open the OS passkey sheet on load when this browser has a passkey hint. Off after an explicit sign-out.
+  // Try the OS passkey sheet as soon as the page opens. Off after an explicit sign-out.
   autoPrompt?: boolean;
   startRegistration: (username: string) => Promise<
     | {
@@ -65,77 +59,26 @@ const SignInPage = function SignInPage({
   const [username, setUsername] = useState("");
   const [phase, setPhase] = useState<"checking" | "idle">("idle");
   const attempted = useRef(false);
-  const [armAutofill, setArmAutofill] = useState(false);
-  const autofillArmed = useRef(false);
-  // Challenge of the pending autofill request. Safari can sign the next modal request
-  // with it, so the button reuses it instead of asking for a new one.
-  const autofillChallenge = useRef<{
-    challengeId: number;
-    options: PublicKeyCredentialRequestOptionsJSON;
-    expiresAt: number;
-  } | null>(null);
   const [pending, setPending] = useState<"register" | "sign-in" | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Browsers never say whether a passkey exists without asking. Only open the sheet
-  // when this browser has used one before; otherwise offer passkeys through autofill.
+  // Browsers never say whether a passkey exists without asking, so ask once on open.
+  // Any failure (no passkey, dismissed sheet, refused without a click) falls back to the forms.
   useEffect(() => {
-    if (attempted.current || !browserSupportsWebAuthn()) return;
+    if (!autoPrompt || attempted.current || !browserSupportsWebAuthn()) return;
     attempted.current = true;
+    setPhase("checking");
     (async () => {
-      if (!autoPrompt || !hasPasskeyHint()) {
-        setArmAutofill(true);
-        return;
-      }
-      setPhase("checking");
       try {
         const { challengeId, options } = await startAuthentication();
         const response = await runAuthentication({ optionsJSON: options });
         await finishAuthentication({ challengeId, response });
-        setPasskeyHint();
         router.push("/");
       } catch {
-        clearPasskeyHint();
         setPhase("idle");
-        setArmAutofill(true);
       }
     })();
   }, [autoPrompt, startAuthentication, finishAuthentication, router]);
-
-  // Runs once the forms are rendered: conditional mediation needs the webauthn input.
-  useEffect(() => {
-    if (!armAutofill || phase !== "idle" || autofillArmed.current) return;
-    autofillArmed.current = true;
-    (async () => {
-      if (!(await browserSupportsWebAuthnAutofill())) return;
-      let challengeId: number;
-      let response: AuthenticationResponseJSON;
-      try {
-        const started = await startAuthentication();
-        challengeId = started.challengeId;
-        // Server challenges last 5 minutes; keep a margin.
-        autofillChallenge.current = {
-          ...started,
-          expiresAt: Date.now() + 4 * 60 * 1000,
-        };
-        response = await runAuthentication({
-          optionsJSON: started.options,
-          useBrowserAutofill: true,
-        });
-      } catch {
-        // Aborted by another ceremony, refused or timed out: the user did nothing, stay quiet.
-        return;
-      }
-      autofillChallenge.current = null;
-      try {
-        await finishAuthentication({ challengeId, response });
-        setPasskeyHint();
-        router.push("/");
-      } catch {
-        setErrorMessage(GENERIC_ERROR);
-      }
-    })();
-  }, [armAutofill, phase, startAuthentication, finishAuthentication, router]);
 
   function fail() {
     setErrorMessage(GENERIC_ERROR);
@@ -169,7 +112,6 @@ const SignInPage = function SignInPage({
         setErrorMessage(finished.error);
         return;
       }
-      setPasskeyHint();
       router.push("/");
     } catch {
       fail();
@@ -184,16 +126,10 @@ const SignInPage = function SignInPage({
       return;
     }
     setPending("sign-in");
-    const reusable = autofillChallenge.current;
-    autofillChallenge.current = null;
     try {
-      const { challengeId, options } =
-        reusable && reusable.expiresAt > Date.now()
-          ? reusable
-          : await startAuthentication();
+      const { challengeId, options } = await startAuthentication();
       const response = await runAuthentication({ optionsJSON: options });
       await finishAuthentication({ challengeId, response });
-      setPasskeyHint();
       router.push("/");
     } catch {
       fail();
@@ -210,7 +146,7 @@ const SignInPage = function SignInPage({
         ) : (
           <>
             {errorMessage ? (
-              <p className="text-danger" role="alert">
+              <p className="text-red-600" role="alert">
                 {errorMessage}
               </p>
             ) : null}

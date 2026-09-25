@@ -22,7 +22,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(function Header(
   const linkClasses = "inline-flex min-h-11 items-center gap-1 text-sm underline-offset-4 hover:underline";
   const [signingOut, setSigningOut] = useState(false);
   const classes = [
-    "flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-border bg-surface px-6 py-4",
+    "flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-zinc-200 bg-white px-6 py-4",
     className,
   ]
     .filter(Boolean)
@@ -42,7 +42,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(function Header(
 
   return (
     <header {...props} ref={ref} className={classes}>
-      <h1 className="text-xl font-semibold text-foreground">Gymtiiime</h1>
+      <h1 className="text-xl font-semibold text-black">Workoutish</h1>
       {username ? (
         <>
           <nav aria-label="Main" className="flex items-center gap-4">
@@ -63,7 +63,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(function Header(
                 <>
                   <span
                     aria-hidden="true"
-                    className="rounded-full bg-primary px-2 text-xs text-primary-foreground"
+                    className="rounded-full bg-black px-2 text-xs text-white"
                   >
                     {pendingRequestCount}
                   </span>

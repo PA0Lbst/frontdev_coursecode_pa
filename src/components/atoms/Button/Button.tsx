@@ -11,8 +11,8 @@ export type ButtonProps = Omit<ComponentProps<"button">, "ref"> & {
 };
 
 const variantClasses = {
-  primary: "bg-primary shadow-sm text-primary-foreground hover:bg-primary-hover",
-  secondary: "border border-border bg-surface-muted text-foreground hover:bg-surface-muted-hover",
+  primary: "bg-black shadow-sm text-white hover:bg-zinc-800",
+  secondary: "border border-zinc-200 bg-zinc-100 text-black hover:bg-zinc-200",
 };
 
 const sizeClasses = {
@@ -22,7 +22,7 @@ const sizeClasses = {
 };
 
 const baseClasses =
-  "relative inline-flex items-center justify-center rounded-full font-medium transition-colors active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:cursor-not-allowed";
+  "relative inline-flex items-center justify-center rounded-full font-medium transition-colors active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:opacity-50 disabled:cursor-not-allowed";
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {

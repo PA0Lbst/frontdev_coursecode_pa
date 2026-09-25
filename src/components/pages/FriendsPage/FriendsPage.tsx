@@ -113,7 +113,7 @@ const FriendsPage = function FriendsPage({
     >
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
         {errorMessage ? (
-          <p className="text-danger" role="alert">
+          <p className="text-red-600" role="alert">
             {errorMessage}
           </p>
         ) : null}

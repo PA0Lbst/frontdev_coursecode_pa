@@ -6,10 +6,10 @@ vi.mock("next/navigation", () => ({ usePathname: () => navigation.pathname }));
 import { render } from "vitest-browser-react";
 import { Header } from "./Header";
 
-test("renders a visible heading named Gymtiiime", async () => {
+test("renders a visible heading named Workoutish", async () => {
   const screen = await render(<Header />);
   await expect
-    .element(screen.getByRole("heading", { name: "Gymtiiime" }))
+    .element(screen.getByRole("heading", { name: "Workoutish" }))
     .toBeVisible();
 });
 

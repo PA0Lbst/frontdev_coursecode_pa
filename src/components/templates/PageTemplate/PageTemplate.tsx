@@ -10,7 +10,7 @@ export type PageTemplateProps = Omit<ComponentProps<"div">, "ref"> & {
 
 const PageTemplate = forwardRef<HTMLDivElement, PageTemplateProps>(
   function PageTemplate({ children, username, pendingRequestCount, onSignOut, className, ...props }, ref) {
-    const classes = ["flex min-h-screen flex-col bg-background", className]
+    const classes = ["flex min-h-screen flex-col bg-zinc-50", className]
       .filter(Boolean)
       .join(" ");
 

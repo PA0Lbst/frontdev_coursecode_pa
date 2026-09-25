@@ -40,10 +40,6 @@ Plain class maps / conditionals inside the component. Do not add CVA, clsx, tail
 
 Rely on native element semantics and keyboard behavior. Loading uses native `disabled` plus `aria-disabled`.
 
-## Theming
-
-Dark mode follows `prefers-color-scheme` only (no toggle, no JS). Colors come from the tokens in `src/app/globals.css` (`background`, `foreground`, `surface`, `surface-muted`, `muted`, `border`, `primary`, `danger`, …). Do not hardcode `white`, `black`, `zinc-*`, `red-*` or `dark:` utilities in components; add a token (light + dark value + `@theme inline` entry) when a new color role is needed.
-
 ## Prisma in UI
 
 Row types come from `@/generated/prisma/browser`. Do not import `@/prisma/prismaClient` or the generated server client in UI. Do not edit `src/generated/prisma`.
@@ -134,7 +130,6 @@ Todo: `page.tsx` calls `listTodos` and renders `TodoPage` with `initialTodos`, `
 
 - Apply the returned row locally. Do not refetch the list after mutations.
 - Coerce serialized `Date` fields to `Date` on initial data and every action result before putting them in state.
-- `localStorage` only for non-identifying UI hints (e.g. `src/data/passkeyHint.ts`). Wrap every access in `try/catch`; the app must work when storage is empty or throws.
 
 Todo: prepend on create; coerce `createdAt`.
 

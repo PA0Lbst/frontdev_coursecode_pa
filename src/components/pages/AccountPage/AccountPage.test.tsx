@@ -32,10 +32,7 @@ function props(overrides = {}) {
   } as unknown as Mocks;
 }
 
-beforeEach(() => {
-  localStorage.clear();
-  browser.startRegistration.mockClear();
-});
+beforeEach(() => browser.startRegistration.mockClear());
 
 test("lists passkeys with created dates", async () => {
   const screen = await render(<AccountPage {...(props() as unknown as AccountPageProps)} />);
@@ -97,15 +94,4 @@ test("shows a generic alert for other failures", async () => {
   await expect
     .element(screen.getByRole("alert"))
     .toHaveTextContent("Something went wrong. Try again.");
-});
-
-test("adding a passkey sets the hint", async () => {
-  const screen = await render(
-    <AccountPage {...(props() as unknown as AccountPageProps)} />,
-  );
-
-  await screen.getByRole("button", { name: "Add a passkey" }).click();
-
-  await expect.element(screen.getByText("Phone")).toBeVisible();
-  expect(localStorage.getItem("gymtiiime:passkey")).toBe("1");
 });

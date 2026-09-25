@@ -107,7 +107,7 @@ const WorkoutPage = function WorkoutPage({
         </Link>
         <h2 className="mb-4 text-lg font-semibold">{title}</h2>
         {errorMessage ? (
-          <p className="mb-4 text-danger" role="alert">
+          <p className="mb-4 text-red-600" role="alert">
             {errorMessage}
           </p>
         ) : null}

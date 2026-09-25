@@ -47,7 +47,7 @@ const FriendRequestList = function FriendRequestList({
         {incoming.map((entry) => (
           <li
             key={entry.id}
-            className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-3"
+            className="flex flex-wrap items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3"
           >
             <span className="min-w-0 flex-1 truncate font-medium">
               {entry.user.username}
@@ -76,7 +76,7 @@ const FriendRequestList = function FriendRequestList({
         {outgoing.map((entry) => (
           <li
             key={entry.id}
-            className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-3"
+            className="flex flex-wrap items-center gap-3 rounded-xl border border-zinc-200 bg-white p-3"
           >
             <span className="min-w-0 flex-1 truncate font-medium">
               {entry.user.username}

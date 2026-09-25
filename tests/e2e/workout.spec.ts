@@ -9,7 +9,7 @@ test("workout set add, edit, and delete persist across reloads", async ({
   const editedExercise = `${exercise}-edited`;
 
   await register(page);
-  await expect(page.getByRole("heading", { name: "Gymtiiime" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Workoutish" })).toBeVisible();
 
   await page.getByRole("textbox", { name: "Name" }).fill(workout);
   await page.getByRole("button", { name: "Add workout" }).click();
